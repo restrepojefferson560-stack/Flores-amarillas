@@ -16,7 +16,7 @@
             height: 100%;
             overflow: hidden;
             background-color: #05020a;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         #canvas-container {
             width: 100%;
@@ -47,53 +47,10 @@
             align-items: center;
             cursor: pointer;
             backdrop-filter: blur(8px);
-            transition: all 0.2s ease;
-        }
-        .icon-btn:active { transform: scale(0.9); }
-
-        /* Contenedor de frases fijas */
-        .phrases-overlay {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            width: 90%;
-            max-width: 500px;
-            pointer-events: none;
         }
 
-        .phrase-badge {
-            background: rgba(25, 10, 30, 0.75);
-            border: 1px solid rgba(255, 105, 180, 0.7);
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 13px;
-            padding: 6px 12px;
-            border-radius: 18px;
-            box-shadow: 0 0 12px rgba(255, 105, 180, 0.5);
-            text-shadow: 0 0 5px rgba(255, 105, 180, 0.8);
-            backdrop-filter: blur(4px);
-        }
-
-        .main-title {
-            position: absolute;
-            top: 25px;
-            left: 20px;
-            z-index: 10;
-            font-size: 26px;
-            font-weight: 800;
-            color: #ff69b4;
-            text-shadow: 0 0 15px rgba(255, 105, 180, 1), 0 0 30px rgba(255, 182, 193, 0.8);
-            pointer-events: none;
-        }
-
-        /* Texto emergente al tocar */
-        .tap-heart {
+        /* Texto flotante al tocar */
+        .tap-text {
             position: absolute;
             color: #ff69b4;
             font-size: 22px;
@@ -110,11 +67,11 @@
                 transform: translate(-50%, -50%) scale(0.8);
             }
             50% {
-                transform: translate(-50%, -90px) scale(1.2);
+                transform: translate(-50%, -80px) scale(1.2);
             }
             100% {
                 opacity: 0;
-                transform: translate(-50%, -130px) scale(1);
+                transform: translate(-50%, -120px) scale(1);
             }
         }
     </style>
@@ -124,20 +81,7 @@
 </head>
 <body>
 
-    <div class="main-title">TE AMO 💖</div>
-
     <div id="canvas-container"></div>
-
-    <div class="phrases-overlay">
-        <div class="phrase-badge">Mi princesa 👑</div>
-        <div class="phrase-badge">Mi reina hermosa 👸🏻</div>
-        <div class="phrase-badge">Mis ojitos lindos 👀💕</div>
-        <div class="phrase-badge">Eres mi lugar favorito 🏡✨</div>
-        <div class="phrase-badge">Siempre juntos 🤍</div>
-        <div class="phrase-badge">Mi amor 💖</div>
-        <div class="phrase-badge">Mi vida ✨</div>
-        <div class="phrase-badge">Me haces muy feliz 🥰</div>
-    </div>
 
     <div class="controls">
         <div class="icon-btn" id="music-btn" onclick="toggleAudio()">🎵</div>
@@ -146,6 +90,50 @@
     <script>
         let scene, camera, renderer, controls;
         let galaxyParticles, heartMesh;
+        const textSprites = [];
+
+        const messages = [
+            "TE AMO 💖",
+            "Mi princesa 👑",
+            "Mi reina hermosa 👸🏻",
+            "Mis ojitos lindos 👀💕",
+            "Eres mi lugar favorito 🏡✨",
+            "Siempre juntos 🤍",
+            "Mi amor 💖",
+            "Mi vida ✨",
+            "Me haces muy feliz 🥰",
+            "La más linda 🌸",
+            "Mi todo 🌎"
+        ];
+
+        function createTextTexture(text) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 512;
+            canvas.height = 128;
+
+            ctx.fillStyle = "rgba(25, 10, 30, 0.85)";
+            ctx.strokeStyle = "#ff69b4";
+            ctx.lineWidth = 6;
+            
+            // Dibujar fondo redondeado
+            ctx.beginPath();
+            ctx.roundRect(10, 10, 492, 108, 30);
+            ctx.fill();
+            ctx.stroke();
+
+            // Dibujar texto
+            ctx.font = "Bold 36px sans-serif";
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.shadowColor = "#ff69b4";
+            ctx.shadowBlur = 15;
+            ctx.fillText(text, 256, 64);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            return texture;
+        }
 
         function init() {
             const container = document.getElementById('canvas-container');
@@ -172,6 +160,7 @@
             createGalaxy();
             createHeartCore();
             createTulips();
+            create3DTexts();
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
             scene.add(ambientLight);
@@ -184,6 +173,28 @@
             window.addEventListener('pointerdown', spawnTapText);
 
             animate();
+        }
+
+        function create3DTexts() {
+            messages.forEach((msg, index) => {
+                const texture = createTextTexture(msg);
+                const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+                const sprite = new THREE.Sprite(spriteMaterial);
+
+                const angle = (index / messages.length) * Math.PI * 2;
+                const radius = 2.8 + (index % 3) * 0.8;
+                const y = ((index % 4) - 1.5) * 1.2;
+
+                sprite.position.set(
+                    Math.cos(angle) * radius,
+                    y,
+                    Math.sin(angle) * radius
+                );
+
+                sprite.scale.set(2.2, 0.55, 1);
+                scene.add(sprite);
+                textSprites.push(sprite);
+            });
         }
 
         function createGalaxy() {
@@ -295,11 +306,10 @@
         }
 
         function spawnTapText(e) {
-            // Evitar que se dispare al tocar el botón de música
             if (e.target.closest('.controls')) return;
 
             const textElem = document.createElement('div');
-            textElem.className = 'tap-heart';
+            textElem.className = 'tap-text';
             textElem.innerText = 'TE AMOO🥺💖';
             textElem.style.left = e.clientX + 'px';
             textElem.style.top = e.clientY + 'px';
