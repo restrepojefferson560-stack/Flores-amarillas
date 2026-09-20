@@ -51,28 +51,71 @@
         }
         .icon-btn:active { transform: scale(0.9); }
 
-        .3d-label {
+        /* Contenedor de frases fijas */
+        .phrases-overlay {
             position: absolute;
-            color: #ffffff;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-weight: 800;
-            font-size: 18px;
-            background: rgba(15, 5, 20, 0.75);
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 105, 180, 0.6);
-            box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            width: 90%;
+            max-width: 500px;
             pointer-events: none;
-            white-space: nowrap;
-            transition: transform 0.1s linear;
         }
-        
-        .main-label {
+
+        .phrase-badge {
+            background: rgba(25, 10, 30, 0.75);
+            border: 1px solid rgba(255, 105, 180, 0.7);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 18px;
+            box-shadow: 0 0 12px rgba(255, 105, 180, 0.5);
+            text-shadow: 0 0 5px rgba(255, 105, 180, 0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .main-title {
+            position: absolute;
+            top: 25px;
+            left: 20px;
+            z-index: 10;
             font-size: 26px;
+            font-weight: 800;
             color: #ff69b4;
-            border: 2px solid #ff69b4;
-            box-shadow: 0 0 25px rgba(255, 105, 180, 1);
-            background: rgba(30, 5, 30, 0.9);
+            text-shadow: 0 0 15px rgba(255, 105, 180, 1), 0 0 30px rgba(255, 182, 193, 0.8);
+            pointer-events: none;
+        }
+
+        /* Texto emergente al tocar */
+        .tap-heart {
+            position: absolute;
+            color: #ff69b4;
+            font-size: 22px;
+            font-weight: 800;
+            text-shadow: 0 0 10px #ff1493, 0 0 20px #ff69b4;
+            pointer-events: none;
+            z-index: 100;
+            animation: floatUp 1.2s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            50% {
+                transform: translate(-50%, -90px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -130px) scale(1);
+            }
         }
     </style>
 
@@ -81,7 +124,20 @@
 </head>
 <body>
 
+    <div class="main-title">TE AMO 💖</div>
+
     <div id="canvas-container"></div>
+
+    <div class="phrases-overlay">
+        <div class="phrase-badge">Mi princesa 👑</div>
+        <div class="phrase-badge">Mi reina hermosa 👸🏻</div>
+        <div class="phrase-badge">Mis ojitos lindos 👀💕</div>
+        <div class="phrase-badge">Eres mi lugar favorito 🏡✨</div>
+        <div class="phrase-badge">Siempre juntos 🤍</div>
+        <div class="phrase-badge">Mi amor 💖</div>
+        <div class="phrase-badge">Mi vida ✨</div>
+        <div class="phrase-badge">Me haces muy feliz 🥰</div>
+    </div>
 
     <div class="controls">
         <div class="icon-btn" id="music-btn" onclick="toggleAudio()">🎵</div>
@@ -90,21 +146,6 @@
     <script>
         let scene, camera, renderer, controls;
         let galaxyParticles, heartMesh;
-        const labels = [];
-        const labelData = [
-            { text: "TE AMO 💖", pos: [0, 2.2, 0], isMain: true },
-            { text: "Mi princesa 👑", pos: [2.5, 1.0, 2] },
-            { text: "Mi amor 💖", pos: [-2.8, -0.3, -1.2] },
-            { text: "Mi vida ✨", pos: [-2.2, 1.5, 2.2] },
-            { text: "Mi todo 🌎", pos: [2.8, -1.0, -2] },
-            { text: "Mi cielo ☁️", pos: [0, -2.2, 1.8] },
-            { text: "Mi reina hermosa 👸🏻", pos: [2.5, 2.0, -1.8] },
-            { text: "Mis ojitos lindos 👀💕", pos: [-2.5, -1.8, 1.2] },
-            { text: "Eres mi lugar favorito 🏡✨", pos: [1.8, -2.5, -1.2] },
-            { text: "Siempre juntos 🤍", pos: [-2.0, 2.5, -2.2] },
-            { text: "Me haces muy feliz 🥰", pos: [3.2, 0.3, 1.2] },
-            { text: "La más linda 🌸", pos: [-3.2, 0.7, -2.2] }
-        ];
 
         function init() {
             const container = document.getElementById('canvas-container');
@@ -131,7 +172,6 @@
             createGalaxy();
             createHeartCore();
             createTulips();
-            createHTMLLabels();
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
             scene.add(ambientLight);
@@ -141,6 +181,8 @@
             scene.add(pointLight);
 
             window.addEventListener('resize', onWindowResize);
+            window.addEventListener('pointerdown', spawnTapText);
+
             animate();
         }
 
@@ -220,7 +262,7 @@
         }
 
         function createTulips() {
-            const tulipCount = 14;
+            const tulipCount = 16;
             for (let i = 0; i < tulipCount; i++) {
                 const tulipGroup = new THREE.Group();
                 
@@ -252,31 +294,21 @@
             }
         }
 
-        function createHTMLLabels() {
-            labelData.forEach((data) => {
-                const div = document.createElement('div');
-                div.className = '3d-label' + (data.isMain ? ' main-label' : '');
-                div.innerText = data.text;
-                document.body.appendChild(div);
-                
-                labels.push({
-                    element: div,
-                    pos: new THREE.Vector3(...data.pos)
-                });
-            });
-        }
+        function spawnTapText(e) {
+            // Evitar que se dispare al tocar el botón de música
+            if (e.target.closest('.controls')) return;
 
-        function updateLabels() {
-            labels.forEach((label) => {
-                const tempV = label.pos.clone();
-                tempV.project(camera);
+            const textElem = document.createElement('div');
+            textElem.className = 'tap-heart';
+            textElem.innerText = 'TE AMOO🥺💖';
+            textElem.style.left = e.clientX + 'px';
+            textElem.style.top = e.clientY + 'px';
+            
+            document.body.appendChild(textElem);
 
-                const x = (tempV.x * .5 + .5) * window.innerWidth;
-                const y = (tempV.y * -.5 + .5) * window.innerHeight;
-
-                label.element.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
-                label.element.style.opacity = tempV.z < 1 ? '1' : '0';
-            });
+            setTimeout(() => {
+                textElem.remove();
+            }, 1200);
         }
 
         function animate() {
@@ -289,7 +321,6 @@
             }
 
             controls.update();
-            updateLabels();
             renderer.render(scene, camera);
         }
 
