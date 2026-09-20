@@ -64,7 +64,7 @@
         }
         
         .main-label {
-            font-size: 22px;
+            font-size: 24px;
             color: #ff69b4;
             text-shadow: 0 0 12px rgba(255, 105, 180, 1), 0 0 25px rgba(255, 182, 193, 0.8);
         }
@@ -91,7 +91,13 @@
             { text: "Mi amor 💖", pos: [-2.5, -0.2, -1] },
             { text: "Mi vida ✨", pos: [-2, 1.2, 2] },
             { text: "Mi todo 🌎", pos: [2.5, -0.8, -2] },
-            { text: "Mi cielo ☁️", pos: [0, -1.8, 1.5] }
+            { text: "Mi cielo ☁️", pos: [0, -1.8, 1.5] },
+            { text: "Mi reina hermosa 👸🏻", pos: [2.2, 1.8, -1.5] },
+            { text: "Mis ojitos lindos 👀💕", pos: [-2.2, -1.5, 1] },
+            { text: "Eres mi lugar favorito 🏡✨", pos: [1.5, -2.2, -1] },
+            { text: "Siempre juntos 🤍", pos: [-1.8, 2.2, -2] },
+            { text: "Me haces muy feliz 🥰", pos: [3, 0.2, 1] },
+            { text: "La más linda 🌸", pos: [-3, 0.5, -2] }
         ];
 
         function init() {
@@ -138,7 +144,6 @@
             const positions = new Float32Array(particleCount * 3);
             const colors = new Float32Array(particleCount * 3);
 
-            // Colores rosados, magenta y destellos blancos/violetas
             const colorPink = new THREE.Color(0xff69b4);
             const colorMagenta = new THREE.Color(0xff1493);
             const colorLightPink = new THREE.Color(0xffb6c1);
@@ -213,17 +218,15 @@
             for (let i = 0; i < tulipCount; i++) {
                 const tulipGroup = new THREE.Group();
                 
-                // Flor de Tulipán (Forma de capullo)
                 const petalGeo = new THREE.ConeGeometry(0.18, 0.45, 6);
                 const petalMat = new THREE.MeshPhongMaterial({ 
                     color: Math.random() > 0.4 ? 0xff69b4 : 0xff1493, 
                     shininess: 80 
                 });
                 const tulipHead = new THREE.Mesh(petalGeo, petalMat);
-                tulipHead.rotation.x = Math.PI; // Invertir el cono para formar el capullo
+                tulipHead.rotation.x = Math.PI;
                 tulipGroup.add(tulipHead);
 
-                // Tallo verde
                 const stemGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.4, 8);
                 const stemMat = new THREE.MeshBasicMaterial({ color: 0x2e8b57 });
                 const stem = new THREE.Mesh(stemGeo, stemMat);
