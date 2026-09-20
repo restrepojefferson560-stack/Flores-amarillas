@@ -55,18 +55,24 @@
             position: absolute;
             color: #ffffff;
             font-family: 'Segoe UI', Arial, sans-serif;
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(255, 105, 180, 0.8), 0 0 20px rgba(255, 105, 180, 0.5);
+            font-weight: 800;
+            font-size: 18px;
+            background: rgba(15, 5, 20, 0.75);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 105, 180, 0.6);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
             pointer-events: none;
             white-space: nowrap;
-            transition: opacity 0.3s;
-            font-size: 16px;
+            transition: transform 0.1s linear;
         }
         
         .main-label {
-            font-size: 24px;
+            font-size: 26px;
             color: #ff69b4;
-            text-shadow: 0 0 12px rgba(255, 105, 180, 1), 0 0 25px rgba(255, 182, 193, 0.8);
+            border: 2px solid #ff69b4;
+            box-shadow: 0 0 25px rgba(255, 105, 180, 1);
+            background: rgba(30, 5, 30, 0.9);
         }
     </style>
 
@@ -86,28 +92,28 @@
         let galaxyParticles, heartMesh;
         const labels = [];
         const labelData = [
-            { text: "TE AMO 💖", pos: [0, 1.8, 0], isMain: true },
-            { text: "Mi princesa 👑", pos: [2, 0.8, 2] },
-            { text: "Mi amor 💖", pos: [-2.5, -0.2, -1] },
-            { text: "Mi vida ✨", pos: [-2, 1.2, 2] },
-            { text: "Mi todo 🌎", pos: [2.5, -0.8, -2] },
-            { text: "Mi cielo ☁️", pos: [0, -1.8, 1.5] },
-            { text: "Mi reina hermosa 👸🏻", pos: [2.2, 1.8, -1.5] },
-            { text: "Mis ojitos lindos 👀💕", pos: [-2.2, -1.5, 1] },
-            { text: "Eres mi lugar favorito 🏡✨", pos: [1.5, -2.2, -1] },
-            { text: "Siempre juntos 🤍", pos: [-1.8, 2.2, -2] },
-            { text: "Me haces muy feliz 🥰", pos: [3, 0.2, 1] },
-            { text: "La más linda 🌸", pos: [-3, 0.5, -2] }
+            { text: "TE AMO 💖", pos: [0, 2.2, 0], isMain: true },
+            { text: "Mi princesa 👑", pos: [2.5, 1.0, 2] },
+            { text: "Mi amor 💖", pos: [-2.8, -0.3, -1.2] },
+            { text: "Mi vida ✨", pos: [-2.2, 1.5, 2.2] },
+            { text: "Mi todo 🌎", pos: [2.8, -1.0, -2] },
+            { text: "Mi cielo ☁️", pos: [0, -2.2, 1.8] },
+            { text: "Mi reina hermosa 👸🏻", pos: [2.5, 2.0, -1.8] },
+            { text: "Mis ojitos lindos 👀💕", pos: [-2.5, -1.8, 1.2] },
+            { text: "Eres mi lugar favorito 🏡✨", pos: [1.8, -2.5, -1.2] },
+            { text: "Siempre juntos 🤍", pos: [-2.0, 2.5, -2.2] },
+            { text: "Me haces muy feliz 🥰", pos: [3.2, 0.3, 1.2] },
+            { text: "La más linda 🌸", pos: [-3.2, 0.7, -2.2] }
         ];
 
         function init() {
             const container = document.getElementById('canvas-container');
             
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x05020a, 0.05);
+            scene.fog = new THREE.FogExp2(0x05020a, 0.04);
 
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 3, 8);
+            camera.position.set(0, 3, 9);
 
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -119,7 +125,7 @@
             controls.dampingFactor = 0.05;
             controls.autoRotate = true;
             controls.autoRotateSpeed = 0.8;
-            controls.maxDistance = 15;
+            controls.maxDistance = 18;
             controls.minDistance = 3;
 
             createGalaxy();
@@ -127,10 +133,10 @@
             createTulips();
             createHTMLLabels();
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
             scene.add(ambientLight);
 
-            const pointLight = new THREE.PointLight(0xff69b4, 2.5, 20);
+            const pointLight = new THREE.PointLight(0xff69b4, 2.8, 22);
             pointLight.position.set(0, 0, 0);
             scene.add(pointLight);
 
@@ -149,12 +155,12 @@
             const colorLightPink = new THREE.Color(0xffb6c1);
 
             for (let i = 0; i < particleCount; i++) {
-                const r = Math.pow(Math.random(), 2) * 6 + 0.5;
+                const r = Math.pow(Math.random(), 2) * 7 + 0.5;
                 const theta = Math.random() * Math.PI * 2 * 3;
                 const phi = (Math.random() - 0.5) * 0.5;
 
                 const x = r * Math.cos(theta);
-                const y = phi * (6 - r) * 0.5;
+                const y = phi * (7 - r) * 0.5;
                 const z = r * Math.sin(theta);
 
                 positions[i * 3] = x;
@@ -265,13 +271,11 @@
                 const tempV = label.pos.clone();
                 tempV.project(camera);
 
-                const x = (tempV.x *  .5 + .5) * window.innerWidth;
+                const x = (tempV.x * .5 + .5) * window.innerWidth;
                 const y = (tempV.y * -.5 + .5) * window.innerHeight;
 
                 label.element.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
-                
-                const dist = camera.position.distanceTo(label.pos);
-                label.element.style.opacity = (tempV.z < 1 && dist < 12) ? '1' : '0';
+                label.element.style.opacity = tempV.z < 1 ? '1' : '0';
             });
         }
 
