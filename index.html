@@ -26,67 +26,6 @@
             left: 0;
             z-index: 1;
         }
-        
-        .code-window {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 420px;
-            background: rgba(13, 17, 23, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 215, 0, 0.25);
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.15);
-            z-index: 10;
-            transition: all 0.3s ease;
-        }
-        .window-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .dots {
-            display: flex;
-            gap: 6px;
-        }
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-        .dot-red { background-color: #ff5f56; }
-        .dot-yellow { background-color: #ffbd2e; }
-        .dot-green { background-color: #27c93f; }
-        .filename {
-            color: #8b949e;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
-        }
-        .code-content {
-            font-family: 'Fira Code', 'Courier New', Courier, monospace;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #c9d1d9;
-        }
-        .line { display: flex; }
-        .num {
-            color: #484f58;
-            width: 25px;
-            text-align: right;
-            padding-right: 10px;
-        }
-        .selector { color: #ff7b72; }
-        .property { color: #79c0ff; }
-        .value { color: #a5d6ff; }
-        .string { color: #a5d6ff; }
-        .var { color: #ffa657; }
 
         .controls {
             position: absolute;
@@ -98,8 +37,8 @@
         }
         .icon-btn {
             background: rgba(20, 20, 30, 0.6);
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            color: #ffd700;
+            border: 1px solid rgba(255, 105, 180, 0.4);
+            color: #ff69b4;
             width: 42px;
             height: 42px;
             border-radius: 50%;
@@ -116,12 +55,18 @@
             position: absolute;
             color: #ffffff;
             font-family: 'Segoe UI', Arial, sans-serif;
-            font-weight: 600;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.8), 0 0 20px rgba(255, 105, 180, 0.5);
             pointer-events: none;
             white-space: nowrap;
             transition: opacity 0.3s;
-            font-size: 14px;
+            font-size: 16px;
+        }
+        
+        .main-label {
+            font-size: 22px;
+            color: #ff69b4;
+            text-shadow: 0 0 12px rgba(255, 105, 180, 1), 0 0 25px rgba(255, 182, 193, 0.8);
         }
     </style>
 
@@ -136,39 +81,17 @@
         <div class="icon-btn" id="music-btn" onclick="toggleAudio()">🎵</div>
     </div>
 
-    <div class="code-window">
-        <div class="window-header">
-            <div class="dots">
-                <div class="dot dot-red"></div>
-                <div class="dot dot-yellow"></div>
-                <div class="dot dot-green"></div>
-            </div>
-            <div class="filename">Style.css</div>
-        </div>
-        <div class="code-content">
-            <div class="line"><span class="num">1</span><span><span class="selector">.Flores_Amarillas</span> {</span></div>
-            <div class="line"><span class="num">2</span><span>&nbsp;&nbsp;<span class="property">position</span>: <span class="value">absolute</span>;</span></div>
-            <div class="line"><span class="num">3</span><span>&nbsp;&nbsp;<span class="property">width</span>: <span class="value">90%</span>;</span></div>
-            <div class="line"><span class="num">4</span><span>&nbsp;&nbsp;<span class="property">font-size</span>: <span class="value">2rem</span>;</span></div>
-            <div class="line"><span class="num">5</span><span>&nbsp;&nbsp;<span class="property">font-family</span>: <span class="string">"Te Amo"</span>;</span></div>
-            <div class="line"><span class="num">6</span><span>&nbsp;&nbsp;<span class="property">height</span>: <span class="var">var(--letter-love)</span>;</span></div>
-            <div class="line"><span class="num">7</span><span>&nbsp;&nbsp;<span class="property">transform</span>: <span class="value">translateX(-50%)</span>;</span></div>
-            <div class="line"><span class="num">8</span><span>&nbsp;&nbsp;<span class="property">background</span>: <span class="var">var(--letter)</span>;</span></div>
-            <div class="line"><span class="num">9</span><span>}</span></div>
-        </div>
-    </div>
-
     <script>
         let scene, camera, renderer, controls;
         let galaxyParticles, heartMesh;
         const labels = [];
         const labelData = [
-            { text: "Te amo 💛", pos: [0, 2.5, 0] },
-            { text: "Eres preciosa 🌻", pos: [2, 0.5, 2] },
-            { text: "Amor de mi vida", pos: [-2.5, -0.5, -1] },
-            { text: "Me encantas 🤍", pos: [-2, 1, 2] },
-            { text: "My Love 💛", pos: [2.5, -1, -2] },
-            { text: "Mi princesa", pos: [0, -2, 1.5] }
+            { text: "TE AMO 💖", pos: [0, 1.8, 0], isMain: true },
+            { text: "Mi princesa 👑", pos: [2, 0.8, 2] },
+            { text: "Mi amor 💖", pos: [-2.5, -0.2, -1] },
+            { text: "Mi vida ✨", pos: [-2, 1.2, 2] },
+            { text: "Mi todo 🌎", pos: [2.5, -0.8, -2] },
+            { text: "Mi cielo ☁️", pos: [0, -1.8, 1.5] }
         ];
 
         function init() {
@@ -201,7 +124,7 @@
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
             scene.add(ambientLight);
 
-            const pointLight = new THREE.PointLight(0xffd700, 2, 20);
+            const pointLight = new THREE.PointLight(0xff69b4, 2.5, 20);
             pointLight.position.set(0, 0, 0);
             scene.add(pointLight);
 
@@ -217,7 +140,7 @@
 
             const colorGold = new THREE.Color(0xffd700);
             const colorYellow = new THREE.Color(0xffea00);
-            const colorWhite = new THREE.Color(0xffffff);
+            const colorPink = new THREE.Color(0xff69b4);
 
             for (let i = 0; i < particleCount; i++) {
                 const r = Math.pow(Math.random(), 2) * 6 + 0.5;
@@ -233,8 +156,8 @@
                 positions[i * 3 + 2] = z;
 
                 let mixedColor = colorGold.clone();
-                if (Math.random() > 0.6) mixedColor.lerp(colorYellow, Math.random());
-                if (Math.random() > 0.85) mixedColor.lerp(colorWhite, Math.random());
+                if (Math.random() > 0.5) mixedColor.lerp(colorYellow, Math.random());
+                if (Math.random() > 0.8) mixedColor.lerp(colorPink, Math.random());
 
                 colors[i * 3] = mixedColor.r;
                 colors[i * 3 + 1] = mixedColor.g;
@@ -272,9 +195,9 @@
             geometry.center();
 
             const material = new THREE.MeshPhongMaterial({
-                color: 0xffd700,
-                emissive: 0xffaa00,
-                emissiveIntensity: 0.5,
+                color: 0xff1493,
+                emissive: 0xff69b4,
+                emissiveIntensity: 0.6,
                 shininess: 100
             });
 
@@ -322,7 +245,7 @@
         function createHTMLLabels() {
             labelData.forEach((data) => {
                 const div = document.createElement('div');
-                div.className = '3d-label';
+                div.className = '3d-label' + (data.isMain ? ' main-label' : '');
                 div.innerText = data.text;
                 document.body.appendChild(div);
                 
@@ -376,7 +299,7 @@
                 btn.innerText = '🔊';
                 isPlaying = true;
             } else {
-                btn.style.borderColor = 'rgba(255, 215, 0, 0.4)';
+                btn.style.borderColor = 'rgba(255, 105, 180, 0.4)';
                 btn.innerText = '🎵';
                 isPlaying = false;
             }
