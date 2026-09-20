@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Galaxia de Flores Amarillas</title>
+    <title>Galaxia de Tulipanes</title>
     <style>
         * {
             margin: 0;
@@ -118,7 +118,7 @@
 
             createGalaxy();
             createHeartCore();
-            createFlowers();
+            createTulips();
             createHTMLLabels();
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
@@ -138,9 +138,10 @@
             const positions = new Float32Array(particleCount * 3);
             const colors = new Float32Array(particleCount * 3);
 
-            const colorGold = new THREE.Color(0xffd700);
-            const colorYellow = new THREE.Color(0xffea00);
+            // Colores rosados, magenta y destellos blancos/violetas
             const colorPink = new THREE.Color(0xff69b4);
+            const colorMagenta = new THREE.Color(0xff1493);
+            const colorLightPink = new THREE.Color(0xffb6c1);
 
             for (let i = 0; i < particleCount; i++) {
                 const r = Math.pow(Math.random(), 2) * 6 + 0.5;
@@ -155,9 +156,9 @@
                 positions[i * 3 + 1] = y;
                 positions[i * 3 + 2] = z;
 
-                let mixedColor = colorGold.clone();
-                if (Math.random() > 0.5) mixedColor.lerp(colorYellow, Math.random());
-                if (Math.random() > 0.8) mixedColor.lerp(colorPink, Math.random());
+                let mixedColor = colorPink.clone();
+                if (Math.random() > 0.5) mixedColor.lerp(colorMagenta, Math.random());
+                if (Math.random() > 0.7) mixedColor.lerp(colorLightPink, Math.random());
 
                 colors[i * 3] = mixedColor.r;
                 colors[i * 3 + 1] = mixedColor.g;
@@ -171,7 +172,7 @@
                 size: 0.035,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.8,
+                opacity: 0.85,
                 blending: THREE.AdditiveBlending
             });
 
@@ -197,7 +198,7 @@
             const material = new THREE.MeshPhongMaterial({
                 color: 0xff1493,
                 emissive: 0xff69b4,
-                emissiveIntensity: 0.6,
+                emissiveIntensity: 0.7,
                 shininess: 100
             });
 
@@ -207,38 +208,38 @@
             scene.add(heartMesh);
         }
 
-        function createFlowers() {
-            const flowerCount = 12;
-            for (let i = 0; i < flowerCount; i++) {
-                const flowerGroup = new THREE.Group();
+        function createTulips() {
+            const tulipCount = 14;
+            for (let i = 0; i < tulipCount; i++) {
+                const tulipGroup = new THREE.Group();
                 
-                const centerGeo = new THREE.SphereGeometry(0.12, 8, 8);
-                const centerMat = new THREE.MeshBasicMaterial({ color: 0x5c3a21 });
-                const center = new THREE.Mesh(centerGeo, centerMat);
-                flowerGroup.add(center);
+                // Flor de Tulipán (Forma de capullo)
+                const petalGeo = new THREE.ConeGeometry(0.18, 0.45, 6);
+                const petalMat = new THREE.MeshPhongMaterial({ 
+                    color: Math.random() > 0.4 ? 0xff69b4 : 0xff1493, 
+                    shininess: 80 
+                });
+                const tulipHead = new THREE.Mesh(petalGeo, petalMat);
+                tulipHead.rotation.x = Math.PI; // Invertir el cono para formar el capullo
+                tulipGroup.add(tulipHead);
 
-                const petalCount = 8;
-                const petalGeo = new THREE.ConeGeometry(0.08, 0.3, 5);
-                const petalMat = new THREE.MeshBasicMaterial({ color: 0xffea00 });
+                // Tallo verde
+                const stemGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.4, 8);
+                const stemMat = new THREE.MeshBasicMaterial({ color: 0x2e8b57 });
+                const stem = new THREE.Mesh(stemGeo, stemMat);
+                stem.position.y = -0.3;
+                tulipGroup.add(stem);
 
-                for (let j = 0; j < petalCount; j++) {
-                    const petal = new THREE.Mesh(petalGeo, petalMat);
-                    const angle = (j / petalCount) * Math.PI * 2;
-                    petal.position.set(Math.cos(angle) * 0.18, Math.sin(angle) * 0.18, 0);
-                    petal.rotation.z = angle - Math.PI / 2;
-                    flowerGroup.add(petal);
-                }
-
-                const angle = (i / flowerCount) * Math.PI * 2;
+                const angle = (i / tulipCount) * Math.PI * 2;
                 const dist = 2 + Math.random() * 2.5;
-                flowerGroup.position.set(
+                tulipGroup.position.set(
                     Math.cos(angle) * dist,
                     (Math.random() - 0.5) * 2,
                     Math.sin(angle) * dist
                 );
 
-                flowerGroup.scale.setScalar(0.8 + Math.random() * 0.4);
-                scene.add(flowerGroup);
+                tulipGroup.scale.setScalar(0.8 + Math.random() * 0.4);
+                scene.add(tulipGroup);
             }
         }
 
@@ -291,7 +292,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        let audioCtx, isPlaying = false;
+        let isPlaying = false;
         function toggleAudio() {
             const btn = document.getElementById('music-btn');
             if (!isPlaying) {
